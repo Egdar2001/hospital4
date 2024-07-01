@@ -1,0 +1,132 @@
+{% extends 'hospital/patient_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style media="screen">
+  /* CSS styles for the form */
+  a:link {
+    text-decoration: none;
+  }
+
+  .note {
+    text-align: center;
+    height: 80px;
+    background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+    color: #fff;
+    font-weight: bold;
+    line-height: 80px;
+  }
+
+  .form-content {
+    padding: 5%;
+    border: 1px solid #ced4da;
+    margin-bottom: 2%;
+  }
+
+  .form-control {
+    border-radius: 1.5rem;
+  }
+
+  .btnSubmit {
+    border: none;
+    border-radius: 1.5rem;
+    padding: 1%;
+    width: 20%;
+    cursor: pointer;
+    background: #0062cc;
+    color: #fff;
+  }
+
+  .menu {
+    top: 50px;
+  }
+</style>
+
+<!-- Include Bootstrap and jQuery from CDN -->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<br><br><br>
+
+<!-- Payment portal form -->
+<form method="post" enctype="multipart/form-data" id="payment-form">
+  {% csrf_token %}
+  <div class="container register-form">
+    <div class="form">
+      <div class="note">
+        <p>Payment Portal</p>
+      </div>
+      <div class="form-content">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="total">Amount to pay</label>
+              <input type="text" class="form-control" value="₹{{ patient.discharge_details.total }}" id="total" disabled>
+            </div>
+            <div class="form-group">
+              <label for="acc_no">Account No</label>
+              <input type="text" class="form-control" name="act_no" placeholder="Account no" id="acc_no" required>
+              <span hidden id="van">{{ van }}</span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" class="form-control" value="{{ patient.mobile }}" disabled>
+            </div>
+            <div class="form-group">
+              <label for="amount">Amount</label>
+              <input type="number" class="form-control" name="amount" placeholder="Amount" id="amount" required>
+            </div>
+          </div>
+        </div>
+        <!-- Button to submit the form -->
+        <button type="submit" class="btnSubmit">Pay Amount</button>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  // JavaScript for validation and handling form submission
+  $(document).ready(function () {
+    // Validate account number against 'van' on change
+    $('#acc_no').change(function () {
+      var acc_no = $(this).val();
+      var van = $('#van').text().trim();
+      if (acc_no !== van) {
+        $(this).css('border', '2px solid red');
+      } else {
+        $(this).css('border', '2px solid green');
+      }
+    });
+
+    // Form submission handling
+    $('#payment-form').submit(function (event) {
+      var acc_no = $('#acc_no').val();
+      var van = $('#van').text().trim();
+      var amount = $('#amount').val();
+      var total = $('#total').val().replace('₹', ''); // Remove currency symbol from total
+
+      // Validate account number
+      if (acc_no !== van) {
+        $('#acc_no').css('border', '2px solid red');
+        event.preventDefault(); // Prevent form submission
+      } else {
+        $('#acc_no').css('border', '2px solid green');
+      }
+
+      // Validate amount against total
+      if (parseFloat(amount) !== parseFloat(total)) {
+        $('#amount').css('border', '2px solid red');
+        event.preventDefault(); // Prevent form submission
+      } else {
+        $('#amount').css('border', '2px solid green');
+      }
+    });
+  });
+</script>
+
+{% endblock content %}

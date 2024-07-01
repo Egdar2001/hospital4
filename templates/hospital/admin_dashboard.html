@@ -1,0 +1,76 @@
+{% extends 'hospital/admin_base.html' %}
+{% load static %}
+{% block content %}
+{% include 'hospital/admin_dashboard_cards.html' %}
+<br><br><br><br>
+<div class="container">
+  <div class="row">
+    <div class="panel panel-primary col-md-5 ml-2">
+      <div class="panel-heading text-center">
+        <h6 class="panel-title">Recent Doctors</h6>
+      </div>
+      <table class="table table-hover" id="doctor-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Mobile</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in doctors %}
+          <tr>
+            <td>{{ d.get_name }}</td>
+            <td>{{ d.department }}</td>
+            <td>{{ d.mobile }}</td>
+            <td>
+              {% if d.status %}
+              <span class="badge badge-primary">Permanent</span>
+              {% else %}
+              <span class="badge badge-success">On Hold</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel panel-primary col-md-5 ml-5">
+      <div class="panel-heading text-center">
+        <h6 class="panel-title">Recent Patients</h6>
+      </div>
+      <table class="table table-hover" id="patient-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Symptoms</th>
+            <th>Mobile</th>
+            <th>Address</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in patients %}
+          <tr>
+            <td>{{ p.get_name }}</td>
+            <td>{{ p.symptoms }}</td>
+            <td>{{ p.mobile }}</td>
+            <td>{{ p.address }}</td>
+            <td>
+              {% if p.status %}
+              <span class="badge badge-primary">Admitted</span>
+              {% else %}
+              <span class="badge badge-success">On Hold</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
