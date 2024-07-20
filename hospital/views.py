@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import render,redirect,reverse
 from . import forms,models
 from django.db.models import Sum
@@ -17,8 +19,11 @@ def signout(request):
     return render(request,'hospital/index.html')
 # Create your views here.
 def home_view(request):
+    print("hello")
     if request.user.is_authenticated:
         return HttpResponseRedirect('afterlogin')
+    print("hello")
+
     return render(request,'hospital/index.html')
 
 
@@ -64,6 +69,7 @@ def admin_signup_view(request):
 
 
 def doctor_signup_view(request):
+    print("hello")
     userForm=forms.DoctorUserForm()
     doctorForm=forms.DoctorForm()
     mydict={'userForm':userForm,'doctorForm':doctorForm}
@@ -103,7 +109,7 @@ def patient_signup_view(request):
 
             patient = patientForm.save(commit=False)
             patient.user = user
-            patient.status = True
+            patient.status = False
             patient.assignedDoctor = assigned_doctor
             patient.save()
             
@@ -359,8 +365,8 @@ def update_patient_view(request,pk):
 
 
 def generate_account_number():
-    import uuid
-    return str(uuid.uuid4().hex[:12])
+    random_number = random.randint(10000000, 9999999999)
+    return random_number
 
 
 
@@ -397,6 +403,7 @@ def admin_add_patient_view(request):
                 balance=10000.00,  # Default balance
                 status='Active'
             )
+            print(account.account_number)
             return HttpResponseRedirect('admin-view-patient')
 
     return render(request, 'hospital/admin_add_patient.html', context=mydict)

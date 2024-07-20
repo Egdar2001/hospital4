@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid
+import random
+
+from hospital.constants import PaymentStatus
 
 departments = [
     ('Cardiologist', 'Cardiologist'),
@@ -65,22 +68,70 @@ class Appointment(models.Model):
         return f"Appointment for {self.patient.get_name()} with {self.doctor.get_name()} on {self.appointment_date}"
 
 
+# class PatientDischargeDetails(models.Model):
+#     patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='discharge_details')
+#     address = models.CharField(max_length=40)
+#     mobile = models.CharField(max_length=20, null=True)
+#     symptoms = models.CharField(max_length=100, null=True)
+#     releaseDate = models.DateField(null=False)
+#     daySpent = models.PositiveIntegerField(null=False)
+#     roomCharge = models.PositiveIntegerField(null=False)
+#     medicineCost = models.PositiveIntegerField(null=False)
+#     doctorFee = models.PositiveIntegerField(null=False)
+#     otherCharge = models.PositiveIntegerField(null=False)
+#     total = models.PositiveIntegerField(null=False)
+#     paid = models.BooleanField(default=False)
+#     status = models.CharField(
+#         _("Payment Status"),
+#         default=PaymentStatus.PENDING,
+#         max_length=254,
+#         blank=False,
+#         null=False,
+#     )
+#     provider_order_id = models.CharField(
+#         _("Order ID"), max_length=40, null=False, blank=False
+#     )
+#     payment_id = models.CharField(
+#         _("Payment ID"), max_length=36, null=False, blank=False
+#     )
+#     signature_id = models.CharField(
+#         _("Signature ID"), max_length=128, null=False, blank=False
+#     )
+#
+#     def __str__(self):
+#         return f"Patient:} - Discharge Date: {self.release_date}"
+
 class PatientDischargeDetails(models.Model):
-    patient = models.OneToOneField(Patient, on_delete=models.CASCADE, related_name='discharge_details')
+    patient = models.OneToOneField('Patient', on_delete=models.CASCADE, related_name='discharge_details')
     address = models.CharField(max_length=40)
     mobile = models.CharField(max_length=20, null=True)
     symptoms = models.CharField(max_length=100, null=True)
-    releaseDate = models.DateField(null=False)
-    daySpent = models.PositiveIntegerField(null=False)
-    roomCharge = models.PositiveIntegerField(null=False)
-    medicineCost = models.PositiveIntegerField(null=False)
-    doctorFee = models.PositiveIntegerField(null=False)
-    otherCharge = models.PositiveIntegerField(null=False)
-    total = models.PositiveIntegerField(null=False)
+    release_date = models.DateField()
+    day_spent = models.PositiveIntegerField()
+    room_charge = models.PositiveIntegerField()
+    medicine_cost = models.PositiveIntegerField()
+    doctor_fee = models.PositiveIntegerField()
+    other_charge = models.PositiveIntegerField()
+    total = models.PositiveIntegerField()
     paid = models.BooleanField(default=False)
+    status = models.CharField(
+        "Payment Status",
+        default='Pending',
+        max_length=254
+    )
+    provider_order_id = models.CharField(
+        "Order ID", max_length=40
+    )
+    payment_id = models.CharField(
+        "Payment ID", max_length=36
+    )
+    signature_id = models.CharField(
+        "Signature ID", max_length=128
+    )
 
     def __str__(self):
-        return f"Patient: {self.patient.get_name()} - Discharge Date: {self.release_date}"
+        # return f"Patient: {self.patient.get_name()} - Discharge Date: {self.release_date}"
+        return f"Patient: - Discharge Date: {self.release_date}"
 
 
 class Account(models.Model):
@@ -112,8 +163,8 @@ class Payment(models.Model):
         super().save(*args, **kwargs)
 
     def generate_transaction_id(self):
-        date_str = timezone.now().strftime("%Y%m%d%H%M%S")
-        return f"{self.account.account_number}-{date_str}-{uuid.uuid4().hex[:6]}"
+        random_number = random.randint(10000000, 99999999)
+        return random_number
 
     def __str__(self):
         return f"{self.patient.get_full_name()} - {self.amount} - {self.status} - {self.transaction_id}"

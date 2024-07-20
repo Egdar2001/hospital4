@@ -21,7 +21,11 @@ STATIC_DIR=os.path.join(BASE_DIR,'static')
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hpbv()ep00boce&o0w7z1h)st148(*m@6@-rk$nn)(n9ojj4c0'
+SECRET_KEY = '4(nxfl87vucg^0^x$q7x)^f7&*oj^isegca!z6nx-qi8_$yz8e'
+# KEY_SECRET = 'ej7ABfKGSmQERDTzOt0p4lxn'
+
+RAZORPAY_KEY_ID = "rzp_test_65NoHHEruznlr3"
+RAZORPAY_KEY_SECRET = "ej7ABfKGSmQERDTzOt0p4lxn"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
